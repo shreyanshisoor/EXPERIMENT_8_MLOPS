@@ -1,0 +1,24 @@
+import joblib
+from flask import Flask, request, jsonify
+
+app=Flask(__name__)
+
+model=joblib.load("model.pkl")
+
+@app.route("/")
+def home():
+    return jsonify({"message":"App is running"})
+
+@app.route("/predict")
+def predict():
+    data=request.get_json()
+    s_l=data["sepal_length"]
+    s_w=["sepal_width"]
+    p_l=["petal_length"]
+    p_w=["petal_width"]
+
+    pred=model.predict([[s_l, s_w, p_l, p_w]])
+    return jsonify({"prediction": pred[0]})
+
+if __name__ =="__main__":
+    app.run(port=5000, debug=True)
